@@ -42,10 +42,8 @@ async fn main() {
 
     println!("Listening on {}", addr);
 
-    axum::Server::bind(&addr.parse().unwrap())
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
 
 async fn handle_webhook(Json(payload): Json<serde_json::Value>) -> &'static str {
